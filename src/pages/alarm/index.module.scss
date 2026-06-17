@@ -1,0 +1,127 @@
+@use '@/styles/variables.scss' as *;
+
+.alarmPage {
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.pageContainer {
+  padding: 0 $page-padding;
+  padding-bottom: calc(env(safe-area-inset-bottom) + #{$spacing-lg});
+}
+
+.filterTabs {
+  display: flex;
+  gap: $spacing-sm;
+  padding: $spacing-md 0;
+  position: sticky;
+  top: 0;
+  background: $color-bg-page;
+  z-index: 10;
+  overflow-x: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.filterTab {
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $radius-button;
+  background: $color-bg-card;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  white-space: nowrap;
+  transition: all $transition-base;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &.active {
+    background: $color-primary;
+    color: $color-text-white;
+  }
+}
+
+.tabCount {
+  padding: 2rpx 10rpx;
+  border-radius: $radius-round;
+  font-size: $font-size-xs;
+  background: rgba(0, 0, 0, 0.1);
+
+  .active & {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.alarmList {
+  margin-top: $spacing-md;
+}
+
+.summaryCard {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.summaryItem {
+  text-align: center;
+}
+
+.summaryValue {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  display: block;
+  line-height: 1.2;
+}
+
+.summaryLabel {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.8);
+  display: block;
+  margin-top: $spacing-xs;
+}
+
+.quickActions {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.quickBtn {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-lg;
+  border-radius: $radius-lg;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  transition: all $transition-base;
+
+  &.call {
+    background: $color-success;
+    color: $color-text-white;
+  }
+
+  &.transfer {
+    background: $color-warning;
+    color: $color-text-white;
+  }
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.btnIcon {
+  font-size: 32rpx;
+}

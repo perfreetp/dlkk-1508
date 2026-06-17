@@ -1,0 +1,118 @@
+@use '@/styles/variables.scss' as *;
+
+.homePage {
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.headerBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 320rpx;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-radius: 0 0 32rpx 32rpx;
+  z-index: 0;
+}
+
+.pageContent {
+  position: relative;
+  z-index: 1;
+  padding: 0 $page-padding;
+  padding-bottom: calc(env(safe-area-inset-bottom) + #{$spacing-lg});
+}
+
+.userCard {
+  margin-top: $spacing-lg;
+  padding: $spacing-lg;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: $radius-xl;
+  border: 1rpx solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10rpx);
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.userAvatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: $radius-round;
+  border: 4rpx solid rgba(255, 255, 255, 0.5);
+  background: $color-bg-card;
+  flex-shrink: 0;
+}
+
+.userInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.greetingText {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-white;
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.userName {
+  font-size: $font-size-md;
+  color: rgba(255, 255, 255, 0.9);
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.shiftInfo {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-md;
+  margin-top: $spacing-lg;
+}
+
+.sectionArea {
+  margin-top: $spacing-xl;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.sectionMore {
+  font-size: $font-size-sm;
+  color: $color-primary;
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.favoriteScroll {
+  margin: 0 -$page-padding;
+  padding: 0 $page-padding;
+}
+
+.favoriteItem {
+  @include scroll-x-item(260rpx);
+  margin-right: $spacing-md;
+}
+
+.emptyWrap {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+}

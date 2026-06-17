@@ -1,0 +1,247 @@
+@use '@/styles/variables.scss' as *;
+
+.pageContainer {
+  padding: $spacing-lg $page-padding;
+  padding-bottom: calc(env(safe-area-inset-bottom) + #{$spacing-xl * 2});
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.alarmHeader {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.alarmTypeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.alarmType {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.typeDot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: $radius-round;
+}
+
+.typeText {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.levelBadge {
+  padding: 6rpx 16rpx;
+  border-radius: $radius-xs;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.statusBadge {
+  padding: 8rpx 20rpx;
+  border-radius: $radius-round;
+  border: 1rpx solid;
+}
+
+.statusText {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.alarmDesc {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  margin-bottom: $spacing-md;
+}
+
+.alarmMeta {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  padding-top: $spacing-md;
+  border-top: 1rpx solid $color-divider;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.metaLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  width: 120rpx;
+  flex-shrink: 0;
+}
+
+.metaValue {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  flex: 1;
+}
+
+.snapshotSection {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.sectionTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.snapshotImage {
+  width: 100%;
+  height: 400rpx;
+  border-radius: $radius-md;
+  background: $color-bg-hover;
+}
+
+.cameraSection {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.cameraInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.cameraIcon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-lg;
+  background: rgba(30, 90, 168, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 36rpx;
+}
+
+.cameraDetail {
+  flex: 1;
+  min-width: 0;
+}
+
+.cameraName {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.cameraLocation {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.viewVideoBtn {
+  @include button-reset;
+  padding: 0 $spacing-lg;
+  height: $button-height-md;
+  background: $color-primary;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-text-white;
+  font-weight: $font-weight-medium;
+  flex-shrink: 0;
+
+  &:active {
+    opacity: 0.9;
+  }
+}
+
+.handleSection {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.handleNote {
+  width: 100%;
+  min-height: 200rpx;
+  padding: $spacing-md;
+  border: 1rpx solid $color-border;
+  border-radius: $radius-md;
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  background: $color-bg-page;
+  box-sizing: border-box;
+}
+
+.bottomActions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc(env(safe-area-inset-bottom) + #{$spacing-md});
+  background: $color-bg-card;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: $spacing-md;
+  z-index: 100;
+}
+
+.actionBtn {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  transition: all $transition-base;
+
+  &.call {
+    background: $color-success;
+    color: $color-text-white;
+  }
+
+  &.transfer {
+    background: $color-warning;
+    color: $color-text-white;
+  }
+
+  &.resolve {
+    background: $color-primary;
+    color: $color-text-white;
+  }
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.btnIcon {
+  font-size: 32rpx;
+}

@@ -1,0 +1,421 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f0f5ff 0%, $color-bg-page 100%);
+  padding: 0 $page-padding 160rpx;
+}
+
+.taskHeader {
+  margin-top: 24rpx;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: 32rpx;
+  box-shadow: $shadow-card;
+}
+
+.taskTitle {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: $color-text-primary;
+  line-height: 1.5;
+  margin-bottom: 20rpx;
+}
+
+.taskMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.metaTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6rpx 16rpx;
+  border-radius: 6rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+
+  &.type {
+    background: rgba(30, 90, 168, 0.1);
+    color: $color-primary;
+  }
+
+  &.priorityHigh {
+    background: rgba(245, 63, 63, 0.1);
+    color: $color-error;
+  }
+
+  &.priorityMedium {
+    background: rgba(255, 125, 0, 0.1);
+    color: $color-warning;
+  }
+
+  &.priorityLow {
+    background: rgba(30, 90, 168, 0.1);
+    color: $color-primary;
+  }
+
+  &.statusPending {
+    background: rgba(245, 63, 63, 0.1);
+    color: $color-error;
+  }
+
+  &.statusProcessing {
+    background: rgba(255, 125, 0, 0.1);
+    color: $color-warning;
+  }
+
+  &.statusCompleted {
+    background: rgba(0, 180, 42, 0.1);
+    color: $color-success;
+  }
+}
+
+.taskInfoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid $color-divider;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.infoLabel {
+  font-size: 22rpx;
+  color: $color-text-tertiary;
+}
+
+.infoValue {
+  font-size: 26rpx;
+  color: $color-text-primary;
+  @include text-ellipsis;
+}
+
+.section {
+  margin-top: 24rpx;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: 32rpx;
+  box-shadow: $shadow-card;
+}
+
+.sectionTitle {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: $color-text-primary;
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+
+  &::before {
+    content: '';
+    width: 6rpx;
+    height: 28rpx;
+    background: $color-primary;
+    border-radius: 3rpx;
+  }
+}
+
+.sectionContent {
+  font-size: 26rpx;
+  color: $color-text-secondary;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16rpx;
+}
+
+.photoItem {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: $radius-md;
+  overflow: hidden;
+}
+
+.photoImage {
+  width: 100%;
+  height: 100%;
+}
+
+.photoDelete {
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+  width: 36rpx;
+  height: 36rpx;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: $radius-round;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-text-white;
+  font-size: 24rpx;
+}
+
+.photoAdd {
+  aspect-ratio: 1;
+  background: $color-bg-page;
+  border: 2rpx dashed $color-border;
+  border-radius: $radius-md;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.8;
+    border-color: $color-primary;
+  }
+}
+
+.photoAddIcon {
+  font-size: 48rpx;
+  color: $color-text-tertiary;
+}
+
+.photoAddText {
+  font-size: 22rpx;
+  color: $color-text-tertiary;
+}
+
+.cameraItem {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 20rpx;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.8;
+    background: $color-bg-hover;
+  }
+}
+
+.cameraSnapshot {
+  width: 120rpx;
+  height: 90rpx;
+  border-radius: 8rpx;
+  background: $color-bg-page;
+}
+
+.cameraInfo {
+  flex: 1;
+}
+
+.cameraName {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: $color-text-primary;
+  margin-bottom: 4rpx;
+  @include text-ellipsis;
+}
+
+.cameraLocation {
+  font-size: 22rpx;
+  color: $color-text-tertiary;
+}
+
+.cameraStatus {
+  font-size: 22rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 4rpx;
+
+  &.online {
+    background: rgba(0, 180, 42, 0.1);
+    color: $color-online;
+  }
+
+  &.offline {
+    background: rgba(245, 63, 63, 0.1);
+    color: $color-offline;
+  }
+}
+
+.cameraArrow {
+  font-size: 32rpx;
+  color: $color-text-tertiary;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 40rpx;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 10rpx;
+  top: 8rpx;
+  bottom: 8rpx;
+  width: 2rpx;
+  background: $color-border;
+}
+
+.timelineItem {
+  position: relative;
+  padding-bottom: 32rpx;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.timelineDot {
+  position: absolute;
+  left: -34rpx;
+  top: 6rpx;
+  width: 20rpx;
+  height: 20rpx;
+  background: $color-primary;
+  border-radius: 50%;
+  border: 4rpx solid $color-bg-card;
+  box-shadow: 0 0 0 2rpx $color-primary;
+
+  &.success {
+    background: $color-success;
+    box-shadow: 0 0 0 2rpx $color-success;
+  }
+
+  &.warning {
+    background: $color-warning;
+    box-shadow: 0 0 0 2rpx $color-warning;
+  }
+
+  &.error {
+    background: $color-error;
+    box-shadow: 0 0 0 2rpx $color-error;
+  }
+}
+
+.timelineContent {
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  padding: 20rpx;
+}
+
+.timelineTitle {
+  font-size: 26rpx;
+  font-weight: 500;
+  color: $color-text-primary;
+  margin-bottom: 8rpx;
+}
+
+.timelineTime {
+  font-size: 22rpx;
+  color: $color-text-tertiary;
+  margin-bottom: 8rpx;
+}
+
+.timelineDesc {
+  font-size: 24rpx;
+  color: $color-text-secondary;
+  line-height: 1.6;
+}
+
+.timelineImages {
+  display: flex;
+  gap: 8rpx;
+  margin-top: 12rpx;
+}
+
+.timelineImage {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 8rpx;
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24rpx $page-padding;
+  background: $color-bg-card;
+  box-shadow: $shadow-float;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+}
+
+.actionRow {
+  display: flex;
+  gap: 16rpx;
+}
+
+.actionBtn {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-md;
+  border-radius: $radius-button;
+  font-size: 26rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    transform: none;
+  }
+}
+
+.btnSecondary {
+  background: $color-bg-page;
+  color: $color-text-secondary;
+  border: 2rpx solid $color-border;
+}
+
+.btnWarning {
+  background: linear-gradient(135deg, #FF7D00 0%, #FF9A3D 100%);
+  color: $color-text-white;
+}
+
+.btnDanger {
+  background: linear-gradient(135deg, #F53F3F 0%, #FF6B6B 100%);
+  color: $color-text-white;
+}
+
+.btnPrimary {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+}
+
+.btnSuccess {
+  background: linear-gradient(135deg, #00B42A 0%, #00D44A 100%);
+  color: $color-text-white;
+}
+
+.emptyState {
+  padding: 32rpx 0;
+  text-align: center;
+  color: $color-text-tertiary;
+  font-size: 26rpx;
+}
+
+.loading {
+  padding: 64rpx 0;
+  text-align: center;
+  color: $color-text-tertiary;
+  font-size: 26rpx;
+}

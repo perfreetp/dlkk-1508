@@ -1,0 +1,64 @@
+@use '@/styles/variables.scss' as *;
+
+.statCard {
+  display: flex;
+  align-items: center;
+  padding: $spacing-lg;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  gap: $spacing-md;
+}
+
+.statIcon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.statDot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: $radius-round;
+}
+
+.statInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.statTitle {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.statValueRow {
+  display: flex;
+  align-items: baseline;
+  gap: $spacing-xs;
+}
+
+.statValue {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+}
+
+.statUnit {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.statTrend {
+  margin-top: $spacing-xs;
+}
+
+.trendText {
+  font-size: $font-size-xs;
+}

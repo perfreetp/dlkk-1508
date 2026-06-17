@@ -1,0 +1,191 @@
+@use '@/styles/variables.scss' as *;
+
+.buildingPage {
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.pageContainer {
+  padding: 0 $page-padding;
+  padding-bottom: calc(env(safe-area-inset-bottom) + #{$spacing-lg});
+}
+
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md 0;
+  position: sticky;
+  top: 0;
+  background: $color-bg-page;
+  z-index: 10;
+}
+
+.filterTabs {
+  display: flex;
+  gap: $spacing-sm;
+  flex: 1;
+  overflow-x: auto;
+  white-space: nowrap;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.filterTab {
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $radius-round;
+  background: $color-bg-card;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  white-space: nowrap;
+  transition: all $transition-base;
+
+  &.active {
+    background: $color-primary;
+    color: $color-text-white;
+  }
+}
+
+.scanBtn {
+  @include button-reset;
+  padding: 0 $spacing-lg;
+  height: $button-height-md;
+  background: $color-primary;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-text-white;
+  font-weight: $font-weight-medium;
+  flex-shrink: 0;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.buildingList {
+  margin-top: $spacing-md;
+}
+
+.buildingCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+  transition: all $transition-base;
+}
+
+.buildingHeader {
+  padding: $spacing-lg;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.buildingIcon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-lg;
+  background: rgba(30, 90, 168, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.buildingIconText {
+  font-size: 36rpx;
+}
+
+.buildingInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.buildingName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.buildingAddress {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  display: block;
+}
+
+.buildingStats {
+  display: flex;
+  gap: $spacing-sm;
+  flex-shrink: 0;
+}
+
+.statBadge {
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+
+  &.online {
+    background: rgba(0, 180, 42, 0.1);
+    color: $color-success;
+  }
+
+  &.offline {
+    background: rgba(245, 63, 63, 0.1);
+    color: $color-error;
+  }
+}
+
+.expandIcon {
+  font-size: 24rpx;
+  color: $color-text-tertiary;
+  transition: transform $transition-base;
+
+  &.expanded {
+    transform: rotate(180deg);
+  }
+}
+
+.floorList {
+  border-top: 1rpx solid $color-divider;
+  padding: 0 $spacing-lg $spacing-lg;
+}
+
+.floorItem {
+  padding-top: $spacing-md;
+}
+
+.floorHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.floorName {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+}
+
+.floorCount {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.cameraGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-md;
+}
+
+.emptyState {
+  padding: $spacing-xl * 2;
+  text-align: center;
+}

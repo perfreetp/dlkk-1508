@@ -1,0 +1,360 @@
+@use '@/styles/variables.scss' as *;
+
+.videoDetailPage {
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.videoPlayer {
+  width: 100%;
+  height: 420rpx;
+  background: #000;
+  position: relative;
+}
+
+.videoPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.placeholderIcon {
+  font-size: 80rpx;
+  opacity: 0.5;
+}
+
+.placeholderText {
+  font-size: $font-size-md;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.videoControls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $spacing-lg;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.playBtn {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: $radius-round;
+  background: $color-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.playIcon {
+  font-size: 32rpx;
+  color: $color-text-white;
+  margin-left: 4rpx;
+}
+
+.progressBar {
+  flex: 1;
+  height: 8rpx;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: $radius-round;
+  position: relative;
+}
+
+.progressFill {
+  width: 35%;
+  height: 100%;
+  background: $color-primary;
+  border-radius: $radius-round;
+}
+
+.timeText {
+  font-size: $font-size-sm;
+  color: $color-text-white;
+  flex-shrink: 0;
+}
+
+.fullscreenBtn {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.fullscreenIcon {
+  font-size: 28rpx;
+  color: $color-text-white;
+}
+
+.pageContent {
+  padding: $spacing-lg $page-padding;
+  padding-bottom: calc(env(safe-area-inset-bottom) + #{$spacing-xl * 2});
+}
+
+.cameraInfo {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.cameraHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.cameraName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.cameraCode {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.favoriteBtn {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: $radius-round;
+  background: rgba(255, 200, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &.active {
+    background: rgba(255, 200, 0, 0.2);
+  }
+}
+
+.favoriteIcon {
+  font-size: 36rpx;
+  color: #FFC800;
+}
+
+.statusBadge {
+  padding: 6rpx 16rpx;
+  border-radius: $radius-round;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.statusDot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: $radius-round;
+}
+
+.statusText {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.cameraMeta {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  padding-top: $spacing-md;
+  border-top: 1rpx solid $color-divider;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.metaLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  width: 100rpx;
+  flex-shrink: 0;
+}
+
+.metaValue {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  flex: 1;
+}
+
+.actionSection {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.sectionTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.actionGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-md;
+}
+
+.actionItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  background: $color-bg-page;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.8;
+    transform: scale(0.95);
+  }
+}
+
+.actionIcon {
+  font-size: 40rpx;
+}
+
+.actionText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.historySection {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.historyItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.historyThumb {
+  width: 120rpx;
+  height: 90rpx;
+  border-radius: $radius-sm;
+  background: $color-bg-hover;
+  flex-shrink: 0;
+}
+
+.historyInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.historyTime {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  display: block;
+  margin-bottom: $spacing-xs;
+}
+
+.historyDuration {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.playIconSmall {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: $radius-round;
+  background: $color-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.playIconText {
+  font-size: 24rpx;
+  color: $color-text-white;
+  margin-left: 2rpx;
+}
+
+.bottomActions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc(env(safe-area-inset-bottom) + #{$spacing-md});
+  background: $color-bg-card;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: $spacing-md;
+  z-index: 100;
+}
+
+.bottomBtn {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  transition: all $transition-base;
+
+  &.snapshot {
+    background: $color-primary;
+    color: $color-text-white;
+  }
+
+  &.record {
+    background: $color-warning;
+    color: $color-text-white;
+  }
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.btnIcon {
+  font-size: 32rpx;
+}
