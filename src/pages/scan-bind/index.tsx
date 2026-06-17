@@ -7,7 +7,7 @@ import { getCameraTypeText } from '@/utils';
 import { Camera } from '@/types';
 
 const ScanBindPage: React.FC = () => {
-  const { cameras, buildings } = useAppContext();
+  const { cameras, buildings, addCamera } = useAppContext();
   const [showManual, setShowManual] = useState(false);
   const [scannedCamera, setScannedCamera] = useState<Camera | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -107,22 +107,24 @@ const ScanBindPage: React.FC = () => {
   const handleBind = async () => {
     if (!scannedCamera && !showManual) return;
 
-    const cameraToBind = scannedCamera || {
+    const selectedBuildingObj = buildings.find(b => b.name === selectedBuilding);
+
+    const finalCamera: Camera = {
       id: `cam_${Date.now()}`,
       name: cameraName,
-      code: manualCode,
+      code: scannedCamera?.code || manualCode,
       location: location,
-      buildingId: '',
+      buildingId: selectedBuildingObj?.id || '',
       buildingName: selectedBuilding,
       floor: selectedFloor,
-      type: 'entrance' as const,
-      status: 'online' as const,
+      type: 'entrance',
+      status: 'online',
       isFavorite: false,
       lastOnlineTime: new Date().toISOString(),
-      snapshotUrl: `https://picsum.photos/id/6/400/300`
+      snapshotUrl: scannedCamera?.snapshotUrl || `https://picsum.photos/id/${Math.floor(Math.random() * 200) + 1}/400/300`
     };
 
-    if (!cameraToBind.name.trim()) {
+    if (!finalCamera.name.trim()) {
       Taro.showToast({
         title: '请输入摄像头名称',
         icon: 'none'
@@ -152,11 +154,13 @@ const ScanBindPage: React.FC = () => {
     }
 
     setIsBinding(true);
-    console.log('[ScanBind] Binding camera:', { ...cameraToBind, name: cameraName, buildingName: selectedBuilding, floor: selectedFloor, location, remark });
+    console.log('[ScanBind] Binding camera:', finalCamera);
 
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
+      addCamera(finalCamera);
+
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);

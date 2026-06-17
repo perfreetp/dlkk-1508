@@ -3,11 +3,10 @@ import { View, Text, Image, Textarea, Button, ScrollView } from '@tarojs/compone
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
 import { useAppContext } from '@/context/AppContext';
-import { mockHandoverRecords } from '@/data/task';
 import { HandoverRecord } from '@/types';
 
 const HandoverPage: React.FC = () => {
-  const { user, pendingTasks, pendingAlarms } = useAppContext();
+  const { user, pendingTasks, pendingAlarms, handoverRecords, addHandoverRecord } = useAppContext();
   const [notes, setNotes] = useState<string>('');
   const [images, setImages] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -19,8 +18,6 @@ const HandoverPage: React.FC = () => {
   const alarmCount = useMemo(() => {
     return pendingAlarms.length;
   }, [pendingAlarms]);
-
-  const handoverRecords: HandoverRecord[] = mockHandoverRecords;
 
   const handleAddPhoto = () => {
     console.log('[Handover] Adding photo...');
@@ -61,11 +58,31 @@ const HandoverPage: React.FC = () => {
 
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
+      const now = new Date();
+      const newRecord: HandoverRecord = {
+        id: `handover_${Date.now()}`,
+        shift: user.shift,
+        shiftName: user.shiftName,
+        date: now.toISOString(),
+        startTime: now.toISOString(),
+        endTime: now.toISOString(),
+        operator: user.name,
+        receiver: '下一班次',
+        notes: notes,
+        unresolvedTasks: unresolvedCount,
+        alarms: alarmCount,
+        images: images
+      };
+      addHandoverRecord(newRecord);
+
       Taro.showToast({
         title: '交接成功',
         icon: 'success'
       });
+
+      setNotes('');
+      setImages([]);
 
       setTimeout(() => {
         Taro.navigateBack();

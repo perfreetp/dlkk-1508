@@ -9,7 +9,7 @@ import { Alarm } from '@/types';
 import styles from './index.module.scss';
 
 const AlarmPage: React.FC = () => {
-  const { alarms, refreshData, pendingAlarms } = useAppContext();
+  const { alarms, refreshData, pendingAlarms, updateAlarmStatus } = useAppContext();
   const [currentTab, setCurrentTab] = useState<string>('pending');
   const [filteredAlarms, setFilteredAlarms] = useState<Alarm[]>([]);
 
@@ -70,8 +70,12 @@ const AlarmPage: React.FC = () => {
       content: `确定将 ${pendingAlarms.length} 条待处理告警转交值班台处理吗？`,
       success: (res) => {
         if (res.confirm) {
+          console.log('[AlarmPage] Batch transferring', pendingAlarms.length, 'alarms');
+          pendingAlarms.forEach(alarm => {
+            updateAlarmStatus(alarm.id, 'transferred', '批量转交值班台处理');
+          });
           Taro.showToast({
-            title: '已转交值班台',
+            title: `已转交${pendingAlarms.length}条告警`,
             icon: 'success'
           });
         }

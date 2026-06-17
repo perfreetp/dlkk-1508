@@ -1,30 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, Image, Input } from '@tarojs/components';
 import Taro, { useRouter, useDidShow } from '@tarojs/taro';
 import classNames from 'classnames';
 import { useAppContext } from '@/context/AppContext';
-import { getAlarmById } from '@/data/alarm';
-import { getCameraById } from '@/data/building';
 import { formatDateTime, getStatusText, getStatusColor, getAlarmLevelText, getAlarmLevelColor } from '@/utils';
 import styles from './index.module.scss';
 
 const AlarmDetailPage: React.FC = () => {
   const router = useRouter();
-  const { updateAlarmStatus, user } = useAppContext();
-  const [alarm, setAlarm] = useState<any>(null);
-  const [camera, setCamera] = useState<any>(null);
+  const { alarms, cameras, updateAlarmStatus, user } = useAppContext();
   const [handleNote, setHandleNote] = useState('');
 
-  useEffect(() => {
-    const id = router.params.id;
-    console.log('[AlarmDetail] Alarm ID:', id);
-    if (id) {
-      const alarmData = getAlarmById(id);
-      const cameraData = alarmData ? getCameraById(alarmData.cameraId) : null;
-      setAlarm(alarmData);
-      setCamera(cameraData);
-    }
-  }, [router.params.id]);
+  const alarm = useMemo(() => {
+    return alarms.find(a => a.id === router.params.id) || null;
+  }, [alarms, router.params.id]);
+
+  const camera = useMemo(() => {
+    if (!alarm) return null;
+    return cameras.find(c => c.id === alarm.cameraId) || null;
+  }, [alarm, cameras]);
 
   useDidShow(() => {
     console.log('[AlarmDetail] Page show');

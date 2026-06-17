@@ -1,9 +1,8 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, Image, Button, ScrollView } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import Taro, { useRouter } from '@tarojs/taro';
 import styles from './index.module.scss';
 import { useAppContext } from '@/context/AppContext';
-import { getTaskById } from '@/data/task';
 import { formatDateTime, getStatusText } from '@/utils';
 import { Task } from '@/types';
 
@@ -17,40 +16,22 @@ interface TimelineRecord {
 }
 
 const TaskDetailPage: React.FC = () => {
-  const { updateTaskStatus, addTaskImage, cameras, user } = useAppContext();
-  const [task, setTask] = useState<Task | null>(null);
-  const [localImages, setLocalImages] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+  const { tasks, cameras, user, updateTaskStatus, addTaskImage, removeTaskImage } = useAppContext();
   const [isProcessing, setIsProcessing] = useState(false);
 
-  useEffect(() => {
-    const taskId = Taro.getCurrentInstance().router?.params?.id as string;
-    console.log('[TaskDetail] Loading task with id:', taskId);
-    
-    if (taskId) {
-      const foundTask = getTaskById(taskId);
-      if (foundTask) {
-        setTask(foundTask);
-        setLocalImages([...foundTask.images]);
-      } else {
-        console.error('[TaskDetail] Task not found:', taskId);
-        Taro.showToast({
-          title: '任务不存在',
-          icon: 'none'
-        });
-      }
-    }
-    setIsLoading(false);
-  }, []);
+  const task = useMemo<Task | null>(() => {
+    return tasks.find(t => t.id === router.params.id) || null;
+  }, [tasks, router.params.id]);
 
   const relatedCamera = useMemo(() => {
     if (!task) return null;
-    return cameras.find(c => c.buildingName === task.buildingName) || cameras[0];
+    return cameras.find(c => c.buildingName === task.buildingName) || cameras[0] || null;
   }, [task, cameras]);
 
-  const timelineRecords = useMemo((): TimelineRecord[] => {
+  const timelineRecords = useMemo<TimelineRecord[]>(() => {
     if (!task) return [];
-    
+
     const records: TimelineRecord[] = [
       {
         id: '1',
@@ -76,10 +57,10 @@ const TaskDetailPage: React.FC = () => {
       records.push({
         id: '3',
         title: '任务完成',
-        time: task.deadline || task.createTime,
+        time: task.deadline || new Date().toISOString(),
         description: '任务已处理完成，所有问题已解决',
         type: 'success',
-        images: task.images.slice(1)
+        images: task.images.length > 1 ? task.images.slice(1) : []
       });
     }
 
@@ -87,35 +68,28 @@ const TaskDetailPage: React.FC = () => {
   }, [task, user.name]);
 
   const handleAddPhoto = () => {
+    if (!task) return;
     console.log('[TaskDetail] Adding photo...');
     Taro.chooseImage({
-      count: 9 - localImages.length,
+      count: 9 - task.images.length,
       success: (res) => {
         console.log('[TaskDetail] Photos selected:', res.tempFilePaths);
-        const newImages = [...localImages, ...res.tempFilePaths];
-        setLocalImages(newImages);
-        if (task) {
-          res.tempFilePaths.forEach(img => addTaskImage(task.id, img));
-        }
+        res.tempFilePaths.forEach(img => addTaskImage(task.id, img));
       },
       fail: (err) => {
         console.error('[TaskDetail] Failed to choose image:', err);
         const mockImages = [
-          `https://picsum.photos/id/${8 + localImages.length}/400/300`
+          `https://picsum.photos/id/${8 + task.images.length}/400/300`
         ];
-        const newImages = [...localImages, ...mockImages];
-        setLocalImages(newImages);
-        if (task) {
-          mockImages.forEach(img => addTaskImage(task.id, img));
-        }
+        mockImages.forEach(img => addTaskImage(task.id, img));
       }
     });
   };
 
   const handleDeletePhoto = (index: number) => {
+    if (!task) return;
     console.log('[TaskDetail] Deleting photo at index:', index);
-    const newImages = localImages.filter((_, i) => i !== index);
-    setLocalImages(newImages);
+    removeTaskImage(task.id, index);
   };
 
   const handleViewCamera = (cameraId: string) => {
@@ -132,8 +106,7 @@ const TaskDetailPage: React.FC = () => {
 
     try {
       updateTaskStatus(task.id, 'processing');
-      setTask({ ...task, status: 'processing', handler: user.name });
-      
+
       Taro.showToast({
         title: '已开始处理',
         icon: 'success'
@@ -156,8 +129,7 @@ const TaskDetailPage: React.FC = () => {
 
     try {
       updateTaskStatus(task.id, 'completed');
-      setTask({ ...task, status: 'completed' });
-      
+
       Taro.showToast({
         title: '任务已完成',
         icon: 'success'
@@ -177,15 +149,16 @@ const TaskDetailPage: React.FC = () => {
     }
   };
 
-  const handleTransfer = async () => {
+  const handleTransfer = () => {
     if (!task) return;
     console.log('[TaskDetail] Transferring task:', task.id);
-    
+
     Taro.showModal({
       title: '转交值班台',
       content: '确定将此任务转交值班台处理吗？',
       success: (res) => {
         if (res.confirm) {
+          updateTaskStatus(task.id, 'completed');
           Taro.showToast({
             title: '已转交值班台',
             icon: 'success'
@@ -255,16 +228,6 @@ const TaskDetailPage: React.FC = () => {
     return status === 'online' ? '在线' : '离线';
   };
 
-  if (isLoading) {
-    return (
-      <View className={styles.page}>
-        <View className={styles.loading}>
-          <Text>加载中...</Text>
-        </View>
-      </View>
-    );
-  }
-
   if (!task) {
     return (
       <View className={styles.page}>
@@ -329,15 +292,14 @@ const TaskDetailPage: React.FC = () => {
 
         <View className={styles.section}>
           <Text className={styles.sectionTitle}>处置照片</Text>
-          {localImages.length > 0 || task.status !== 'completed' ? (
+          {task.images.length > 0 || task.status !== 'completed' ? (
             <View className={styles.photoGrid}>
-              {localImages.map((img, index) => (
+              {task.images.map((img, index) => (
                 <View key={index} className={styles.photoItem}>
                   <Image
                     className={styles.photoImage}
                     src={img}
                     mode='aspectFill'
-                    onClick={() => handleDeletePhoto(index)}
                   />
                   {task.status !== 'completed' && (
                     <View className={styles.photoDelete} onClick={() => handleDeletePhoto(index)}>
@@ -346,7 +308,7 @@ const TaskDetailPage: React.FC = () => {
                   )}
                 </View>
               ))}
-              {localImages.length < 9 && task.status !== 'completed' && (
+              {task.images.length < 9 && task.status !== 'completed' && (
                 <View className={styles.photoAdd} onClick={handleAddPhoto}>
                   <Text className={styles.photoAddIcon}>+</Text>
                   <Text className={styles.photoAddText}>添加照片</Text>

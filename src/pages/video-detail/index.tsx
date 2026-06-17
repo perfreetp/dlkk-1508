@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { View, Text, Image } from '@tarojs/components';
 import Taro, { useRouter, useDidShow } from '@tarojs/taro';
 import classNames from 'classnames';
 import { useAppContext } from '@/context/AppContext';
 import { getCameraById } from '@/data/building';
-import { getVideoRecordsByCamera, formatDuration } from '@/data/video';
+import { getVideoRecordsByCamera, formatDuration, VideoRecord } from '@/data/video';
 import { getStatusText, getStatusColor } from '@/utils';
 import styles from './index.module.scss';
 
@@ -12,9 +12,13 @@ const VideoDetailPage: React.FC = () => {
   const router = useRouter();
   const { toggleFavorite, cameras } = useAppContext();
   const [camera, setCamera] = useState<any>(null);
-  const [videoRecords, setVideoRecords] = useState<any[]>([]);
+  const [videoRecords, setVideoRecords] = useState<VideoRecord[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [playbackMode, setPlaybackMode] = useState(false);
+  const [currentRecord, setCurrentRecord] = useState<VideoRecord | null>(null);
+  const [playbackProgress, setPlaybackProgress] = useState(0);
+  const playbackTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     const id = router.params.id;
@@ -22,11 +26,39 @@ const VideoDetailPage: React.FC = () => {
     if (id) {
       const cameraData = getCameraById(id);
       const liveCamera = cameras.find(c => c.id === id);
-      setCamera(cameraData);
+      setCamera(cameraData || liveCamera || null);
       setIsFavorite(liveCamera?.isFavorite || cameraData?.isFavorite || false);
       setVideoRecords(getVideoRecordsByCamera(id));
     }
   }, [router.params.id, cameras]);
+
+  useEffect(() => {
+    if (isPlaying && playbackMode && currentRecord) {
+      if (playbackTimerRef.current) clearInterval(playbackTimerRef.current);
+      const tickMs = Math.max(300, (currentRecord.duration / 100) * 1000 / 30);
+      playbackTimerRef.current = setInterval(() => {
+        setPlaybackProgress(prev => {
+          if (prev >= 100) {
+            setIsPlaying(false);
+            return 100;
+          }
+          return prev + 1;
+        });
+      }, tickMs);
+    } else {
+      if (playbackTimerRef.current) {
+        clearInterval(playbackTimerRef.current);
+        playbackTimerRef.current = null;
+      }
+    }
+
+    return () => {
+      if (playbackTimerRef.current) {
+        clearInterval(playbackTimerRef.current);
+        playbackTimerRef.current = null;
+      }
+    };
+  }, [isPlaying, playbackMode, currentRecord]);
 
   useDidShow(() => {
     console.log('[VideoDetail] Page show');
@@ -46,7 +78,7 @@ const VideoDetailPage: React.FC = () => {
   const handlePlay = () => {
     setIsPlaying(!isPlaying);
     Taro.showToast({
-      title: isPlaying ? '已暂停' : '正在播放',
+      title: isPlaying ? '已暂停' : (playbackMode ? '回放播放中' : '直播中'),
       icon: 'none'
     });
   };
@@ -67,13 +99,29 @@ const VideoDetailPage: React.FC = () => {
     });
   };
 
-  const handlePlayHistory = (record: any) => {
+  const handlePlayHistory = (record: VideoRecord) => {
     console.log('[VideoDetail] Play history:', record.id);
+    setPlaybackMode(true);
+    setCurrentRecord(record);
+    setPlaybackProgress(0);
+    setIsPlaying(true);
     Taro.showToast({
-      title: `正在播放 ${record.startTime}`,
-      icon: 'loading',
-      duration: 1000
+      title: `正在回放 ${record.startTime.split(' ')[1] || record.startTime}`,
+      icon: 'none',
+      duration: 1500
     });
+  };
+
+  const handleBackToLive = () => {
+    console.log('[VideoDetail] Back to live');
+    setPlaybackMode(false);
+    setCurrentRecord(null);
+    setPlaybackProgress(0);
+    setIsPlaying(false);
+    if (playbackTimerRef.current) {
+      clearInterval(playbackTimerRef.current);
+      playbackTimerRef.current = null;
+    }
   };
 
   const handleAction = (action: string) => {
@@ -110,6 +158,21 @@ const VideoDetailPage: React.FC = () => {
     }
   };
 
+  const displayImage = useMemo(() => {
+    if (playbackMode && currentRecord) return currentRecord.snapshotUrl;
+    return camera?.snapshotUrl;
+  }, [playbackMode, currentRecord, camera]);
+
+  const elapsedSeconds = useMemo(() => {
+    if (!currentRecord) return 0;
+    return Math.floor(currentRecord.duration * playbackProgress / 100);
+  }, [currentRecord, playbackProgress]);
+
+  const getTimeOnly = (datetime: string) => {
+    const parts = datetime.split(' ');
+    return parts.length > 1 ? parts[1] : datetime;
+  };
+
   const actions = [
     { id: 'quality', icon: '⚙️', text: '画质' },
     { id: 'ptz', icon: '🎮', text: '云台' },
@@ -129,27 +192,60 @@ const VideoDetailPage: React.FC = () => {
   return (
     <View className={styles.videoDetailPage}>
       <View className={styles.videoPlayer}>
-        <Image 
+        <Image
           className={styles.videoPlaceholder}
-          src={camera.snapshotUrl}
+          src={displayImage}
           mode="aspectFill"
         />
-        <View className={styles.videoPlaceholder}>
-          {!isPlaying && (
-            <>
-              <Text className={styles.placeholderIcon}>▶️</Text>
-              <Text className={styles.placeholderText}>点击播放</Text>
-            </>
-          )}
-        </View>
+        <View className={styles.videoOverlay} />
+
+        {playbackMode && (
+          <View className={styles.playbackBadge}>
+            <Text className={styles.playbackBadgeText}>回放</Text>
+          </View>
+        )}
+
+        {playbackMode && currentRecord && (
+          <View className={styles.playbackTimeInfo}>
+            <Text className={styles.playbackTimeText}>
+              {getTimeOnly(currentRecord.startTime)} - {getTimeOnly(currentRecord.endTime)}
+            </Text>
+            <Text className={styles.playbackDurationText}>
+              时长 {formatDuration(currentRecord.duration)}
+            </Text>
+          </View>
+        )}
+
+        {!isPlaying && (
+          <View className={styles.playOverlay} onClick={handlePlay}>
+            <Text className={styles.playOverlayIcon}>▶</Text>
+            <Text className={styles.playOverlayText}>
+              {playbackMode ? '点击播放回放' : '点击观看直播'}
+            </Text>
+          </View>
+        )}
+
         <View className={styles.videoControls}>
           <View className={styles.playBtn} onClick={handlePlay}>
             <Text className={styles.playIcon}>{isPlaying ? '⏸' : '▶'}</Text>
           </View>
           <View className={styles.progressBar}>
-            <View className={styles.progressFill} />
+            <View
+              className={styles.progressFill}
+              style={{ width: `${playbackMode ? playbackProgress : 35}%` }}
+            />
           </View>
-          <Text className={styles.timeText}>00:42 / 实时</Text>
+          <Text className={styles.timeText}>
+            {playbackMode && currentRecord
+              ? `${formatDuration(elapsedSeconds)} / ${formatDuration(currentRecord.duration)}`
+              : '00:42 / 实时'
+            }
+          </Text>
+          {playbackMode && (
+            <View className={styles.backLiveBtn} onClick={handleBackToLive}>
+              <Text className={styles.backLiveIcon}>直播</Text>
+            </View>
+          )}
           <View className={styles.fullscreenBtn}>
             <Text className={styles.fullscreenIcon}>⛶</Text>
           </View>
@@ -163,26 +259,26 @@ const VideoDetailPage: React.FC = () => {
               <Text className={styles.cameraName}>{camera.name}</Text>
               <Text className={styles.cameraCode}>{camera.code}</Text>
             </View>
-            <View 
+            <View
               className={classNames(styles.favoriteBtn, isFavorite && styles.active)}
               onClick={handleToggleFavorite}
             >
               <Text className={styles.favoriteIcon}>{isFavorite ? '★' : '☆'}</Text>
             </View>
           </View>
-          
-          <View 
+
+          <View
             className={styles.statusBadge}
-            style={{ 
+            style={{
               backgroundColor: getStatusColor(camera.status) + '15',
               borderColor: getStatusColor(camera.status)
             }}
           >
-            <View 
-              className={styles.statusDot} 
-              style={{ backgroundColor: getStatusColor(camera.status) }} 
+            <View
+              className={styles.statusDot}
+              style={{ backgroundColor: getStatusColor(camera.status) }}
             />
-            <Text 
+            <Text
               className={styles.statusText}
               style={{ color: getStatusColor(camera.status) }}
             >
@@ -214,7 +310,7 @@ const VideoDetailPage: React.FC = () => {
           <Text className={styles.sectionTitle}>快捷操作</Text>
           <View className={styles.actionGrid}>
             {actions.map(action => (
-              <View 
+              <View
                 key={action.id}
                 className={styles.actionItem}
                 onClick={() => handleAction(action.id)}
@@ -227,18 +323,26 @@ const VideoDetailPage: React.FC = () => {
         </View>
 
         <View className={styles.historySection}>
-          <Text className={styles.sectionTitle}>历史录像</Text>
+          <View className={styles.historyHeader}>
+            <Text className={styles.sectionTitle}>历史录像</Text>
+            {playbackMode && (
+              <Text className={styles.playingHint}>回放中</Text>
+            )}
+          </View>
           <View className={styles.historyList}>
             {videoRecords.length > 0 ? (
               videoRecords.map(record => (
-                <View 
+                <View
                   key={record.id}
-                  className={styles.historyItem}
+                  className={classNames(
+                    styles.historyItem,
+                    currentRecord?.id === record.id && styles.historyItemActive
+                  )}
                   onClick={() => handlePlayHistory(record)}
                 >
-                  <Image 
-                    className={styles.historyThumb} 
-                    src={record.snapshotUrl} 
+                  <Image
+                    className={styles.historyThumb}
+                    src={record.snapshotUrl}
                     mode="aspectFill"
                   />
                   <View className={styles.historyInfo}>

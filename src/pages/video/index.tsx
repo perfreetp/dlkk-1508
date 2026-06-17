@@ -82,11 +82,17 @@ const VideoPage: React.FC = () => {
 
   const handleViewHistory = () => {
     console.log('[VideoPage] View history records');
-    Taro.showToast({
-      title: '正在加载历史录像...',
-      icon: 'loading',
-      duration: 1000
-    });
+    const firstCamera = cameras.find(c => c.status === 'online') || cameras[0];
+    if (firstCamera) {
+      Taro.navigateTo({
+        url: `/pages/video-detail/index?id=${firstCamera.id}`
+      });
+    } else {
+      Taro.showToast({
+        title: '暂无可用摄像头',
+        icon: 'none'
+      });
+    }
   };
 
   const buildingOptions = [
